@@ -18,37 +18,81 @@ COLOURS = ["Red","Orange","Yellow","Green","Blue","Purple","White","Gray","Black
 
 LOGIN_HTML = """
 <!doctype html>
-<title>Select vehicle</title>
-<h2>Select your vehicle colour</h2>
-<form method=post>
-  <select name=color>
-    {% for c in colours %}
-      <option value="{{c}}">{{c}}</option>
-    {% endfor %}
-  </select>
-  <button type=submit>Enter</button>
-</form>
+<html>
+<head>
+  <title>Select Vehicle</title>
+  <style>
+    body { font-family: sans-serif; text-align: center; padding: 2em; background: #f9f9f9; }
+    h2 { color: #333; }
+    form { background: white; display: inline-block; padding: 2em; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    select, button { padding: 0.5em 1em; font-size: 1rem; border-radius: 6px; border: 1px solid #ccc; margin-top: 1em; }
+    button { background: #007BFF; color: white; border: none; cursor: pointer; }
+    button:hover { background: #0056b3; }
+  </style>
+</head>
+<body>
+  <h2>Select Your Vehicle Colour</h2>
+  <form method="post">
+    <select name="color">
+      {% for c in colours %}
+        <option value="{{c}}">{{c}}</option>
+      {% endfor %}
+    </select>
+    <br>
+    <button type="submit">Enter</button>
+  </form>
+</body>
+</html>
 """
 
 DASH_HTML = """
 <!doctype html>
-<title>Vehicle dashboard</title>
-<h2 style="margin-bottom:0">Vehicle ({{colour}})</h2>
-<div style="font-size:3rem">
-  <span id=stat>…</span>
-</div>
-<p>Last speed: <span id=speed>…</span> mph</p>
-<script>
-async function poll(){
-    const r = await fetch("/status");
-    const j = await r.json();
-    if (j.error){ document.getElementById("stat").textContent = j.error; return; }
-    document.getElementById("stat").textContent   = j.status;
-    document.getElementById("speed").textContent  = (j.speed ?? "–").toFixed(1);
-}
-poll();                       // initial
-setInterval(poll, 1000);      // every 1 s
-</script>
+<html>
+<head>
+  <title>Vehicle Dashboard</title>
+  <style>
+    body { font-family: sans-serif; background: #f0f4f8; padding: 2em; text-align: center; }
+    h2 { color: #444; }
+    .dashboard {
+      background: white;
+      display: inline-block;
+      padding: 2em 3em;
+      border-radius: 14px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+      margin-top: 2em;
+    }
+    .stat { font-size: 2.5rem; color: #222; margin: 1rem 0; }
+    .speed { font-size: 1.25rem; color: #666; }
+  </style>
+</head>
+<body>
+  <h2>Vehicle ({{colour}})</h2>
+  <div class="dashboard">
+    <div class="stat" id="stat">…</div>
+    <div class="speed">Last speed: <span id="speed">…</span> mph</div>
+  </div>
+  <script>
+    async function updateStatus() {
+      try {
+        const res = await fetch("/status");
+        const data = await res.json();
+        if (data.error) {
+          document.getElementById("stat").textContent = data.error;
+          document.getElementById("speed").textContent = "–";
+        } else {
+          document.getElementById("stat").textContent = data.status;
+          document.getElementById("speed").textContent = (data.speed ?? "–").toFixed(1);
+        }
+      } catch (err) {
+        document.getElementById("stat").textContent = "Error fetching status.";
+        document.getElementById("speed").textContent = "–";
+      }
+    }
+    updateStatus();
+    setInterval(updateStatus, 1000);
+  </script>
+</body>
+</html>
 """
 
 def get_db():
