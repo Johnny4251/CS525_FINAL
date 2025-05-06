@@ -24,7 +24,7 @@ from ultralytics import YOLO
 import sqlite3
 import json
 
-SPEED_LIMIT_MPH   = 25.0          # tweak to the speed limit
+SPEED_LIMIT_MPH   = 15.0          # tweak to the speed limit
 UDP_BCAST_IP      = "255.255.255.255"   # broadcast so “vehicles” can all hear
 UDP_BCAST_PORT    = 6000
 
@@ -50,12 +50,12 @@ VEHICLE_CLASSES    = [2, 3, 5, 7]   # COCO ids: car, motorcycle, bus, truck
 BOUNDARY_ORIENTATION = "vertical"   # "horizontal" or "vertical"
 
 # If horizontal (vehicles move top→bottom): give Y pixel positions
-LINE1_POS = 400    # start line  (Y or X depending on orientation)
-LINE2_POS = 1120    # finish line
+LINE1_POS = 550   # start line  (Y or X depending on orientation)
+LINE2_POS = 1400    # finish line
 
 # If vertical (vehicles move left→right): give X pixel positions
 # (You still use LINE1_POS / LINE2_POS; orientation decides how they’re used)
-DISTANCE_FT        = 75.0          # real‑world distance between lines
+DISTANCE_FT        = 35          # real‑world distance between lines
 MATCH_TOL          = 50             # pixel radius to match same vehicle
 LOG_FILE           = "speed_log.txt"
 ENABLE_PREVIEW     = True           # show live window with click‑to‑print
@@ -67,10 +67,10 @@ def get_dominant_color(roi: np.ndarray) -> str:
     avg_bgr = cv2.mean(roi)[:3]
     avg_bgr = np.array(avg_bgr, dtype=np.uint8).reshape(1, 1, 3)
     h, s, v = cv2.cvtColor(avg_bgr, cv2.COLOR_BGR2HSV)[0, 0]
-
+ 
     if s < 50: 
         if v < 50:   return "Black"
-        if v > 200:  return "White"
+        if v > 100:  return "White"
         return "Gray"
     if   h < 10 or h >= 170: return "Red"
     elif h < 25:             return "Orange"

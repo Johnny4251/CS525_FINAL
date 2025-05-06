@@ -22,7 +22,7 @@ SERVER_IP   = "127.0.0.1"   # GPU machine’s IP
 SERVER_PORT = 5000
 CAM_INDEX   = 0
 WIDTH, HEIGHT = 640, 480
-FPS_TARGET  = 20            # camera target FPS
+FPS_TARGET  = 30            # camera target FPS
 JPEG_QUALITY = 80
 
 def open_capture(source: str | None):
