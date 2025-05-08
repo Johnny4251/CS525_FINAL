@@ -23,7 +23,7 @@ SERVER_PORT = 5000
 CAM_INDEX   = 0
 WIDTH, HEIGHT = 640, 480
 FPS_TARGET  = 30            # camera target FPS
-JPEG_QUALITY = 80
+JPEG_QUALITY = 10
 
 def open_capture(source: str | None):
     """
@@ -64,15 +64,14 @@ def main():
             ret, frame = cap.read()
             if not ret:
                 print("[Pi] End of stream or camera error")
-                cap = open_capture(args.source)
-                continue
-            ts = time.time()
+                #cap = open_capture(args.source)
+                break
 
-            # overlay
-            cv2.putText(frame,
-                        time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(ts)),
-                        (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1,
-                        (0, 255, 0), 2)
+            # overlay => Optional, just writes time to frame
+            #cv2.putText(frame,
+            #            time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(ts)),
+            #            (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1,
+            #            (0, 255, 0), 2)
 
             # JPEG encode 
             ok, jpg = cv2.imencode(".jpg", frame,
@@ -80,6 +79,7 @@ def main():
             if not ok:
                 continue
             payload = jpg.tobytes()
+            ts = time.time_ns()
             header  = struct.pack("dI", ts, len(payload))
             sock.sendall(header + payload)
 
@@ -95,4 +95,5 @@ def main():
         print("[Pi] Streaming stopped.")
 
 if __name__ == "__main__":
-    main()
+    while True:
+        main()
