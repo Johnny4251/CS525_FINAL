@@ -2,7 +2,7 @@
 ### Instructor: Dr. Priyangshu Sen
 ### John Pertell 04.07.25
 
-[embed]imgs/IotPoster.pdf[/embed]
+![Poster Example](imgs/IotPoster.pdf)
 
 # Vehicle Speed Detection & Dashboard System
 
